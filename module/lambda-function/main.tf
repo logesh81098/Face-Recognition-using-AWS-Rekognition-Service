@@ -42,3 +42,37 @@ resource "aws_lambda_invocation" "collectionid-invoke" {
     "collection_id" = "face-rekognition-collection"
   })
 }
+
+
+###################################################################################################################################################################
+#                                                                Archive files
+###################################################################################################################################################################
+
+#Converting file formate from .py to .zip
+
+data "archive_file" "faceprints-lambda" {
+  type = "zip"
+  source_dir = "module/lambda-function"
+  output_path = "module/lambda-function/rekognition-faceprints.zip"
+}
+
+
+###################################################################################################################################################################
+#                                                                Lambda Function
+###################################################################################################################################################################
+
+#Deploying Lambda Function to generate faceprints from source images
+
+resource "aws_lambda_function" "rekognition-faceprints" {
+  function_name = "Rekognition-Faceprints"
+  description = "Lambda Function to generate faceprints"
+  filename = "module/lambda-function/rekognition-faceprints.zip"
+  role = var.faceprints-role
+  handler = "rekognition-faceprints.lambda_handler"
+  runtime = var.runtime
+  timeout = 20
+  tags = {
+    Name = "Rekognition-Faceprints"
+    Project = "Recognizing-faces-using-AWS-Rekognition-service"
+  }
+}

@@ -5,3 +5,7 @@ variable "collectionid-role" {
 variable "runtime" {
   default = "python3.8"
 }
+
+variable "faceprints-role" {
+  default = {}
+}

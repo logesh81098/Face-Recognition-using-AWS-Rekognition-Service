@@ -9,6 +9,7 @@ module "iam" {
 module "lambda-function" {
   source = "./module/lambda-function"
   collectionid-role = module.iam.collectionid-role-arn
+  faceprints-role = module.iam.faceprints-role-arn
 }
 
 module "dynamodb-table" {
