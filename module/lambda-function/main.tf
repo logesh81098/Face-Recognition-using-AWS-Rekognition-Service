@@ -30,3 +30,15 @@ resource "aws_lambda_function" "rekognition-collection-id" {
   }
 }
 
+###################################################################################################################################################################
+#                                                           Invoke Lambda Function
+###################################################################################################################################################################
+
+#Invoke Lambda function
+
+resource "aws_lambda_invocation" "collectionid-invoke" {
+  function_name = aws_lambda_function.rekognition-collection-id.function_name
+  input = jsonencode({
+    "collection_id" = "face-rekognition-collection"
+  })
+}
