@@ -76,3 +76,15 @@ resource "aws_lambda_function" "rekognition-faceprints" {
     Project = "Recognizing-faces-using-AWS-Rekognition-service"
   }
 }
+
+######################################################################################################################################################################
+#                                                      Resource Based Policy for Lambda function
+######################################################################################################################################################################
+
+resource "aws_lambda_permission" "resource-based-policy" {
+  statement_id = "Resource-Based-Policy-for-S3-to-trigger-Lambda-Function"
+  function_name = aws_lambda_function.rekognition-faceprints.function_name
+  principal = "s3.amazonaws.com"
+  action = "lambda:InvokeFunction"
+  source_arn = var.source-bucket-arn
+}

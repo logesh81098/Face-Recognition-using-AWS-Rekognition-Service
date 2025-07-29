@@ -10,6 +10,7 @@ module "lambda-function" {
   source = "./module/lambda-function"
   collectionid-role = module.iam.collectionid-role-arn
   faceprints-role = module.iam.faceprints-role-arn
+  source-bucket-arn = module.s3.source-bucket-arn
 }
 
 module "dynamodb-table" {

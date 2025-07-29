@@ -9,3 +9,7 @@ variable "runtime" {
 variable "faceprints-role" {
   default = {}
 }
+
+variable "source-bucket-arn" {
+  default = {}
+}
