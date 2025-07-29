@@ -1,5 +1,6 @@
 module "s3" {
   source = "./module/s3"
+  facerprints-lambda-function = module.lambda-function.faceprints-lambda-function-arn
 }
 
 module "iam" {
