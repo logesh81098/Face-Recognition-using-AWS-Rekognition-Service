@@ -175,3 +175,95 @@ resource "aws_iam_role_policy_attachment" "rekognition-faceprints" {
   role = aws_iam_role.rekognition-faceprints-role.id
   policy_arn = aws_iam_policy.rekognition-faceprints-policy.arn
 }
+
+
+###################################################################################################################################################################
+#                                                                IAM Role
+###################################################################################################################################################################
+
+#Deploying IAM Role for Application server
+
+resource "aws_iam_role" "application-server-role" {
+  name = "Face-Rekognition-Application-Server-Role"
+  description = "IAM Role for Application server"
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            }
+        }
+    ]
+}  
+EOF
+    tags = {
+      Name = "Face-Rekognition-Application-Server-Role"
+      Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    }
+}
+
+
+###################################################################################################################################################################
+#                                                                IAM Policy
+###################################################################################################################################################################
+
+#Deploying IAM Policy for Application Server
+
+resource "aws_iam_policy" "application-server-policy" {
+  name = "Face-Rekognition-Application-Server-Policy"
+  description = "IAM Policy for Application Server"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "FullAccessDynamoDB",
+            "Effect": "Allow",
+            "Action": [
+            "dynamodb:*"
+            ],
+            "Resource": "arn:aws:dynamodb:*:*:*"
+        },
+        {
+            "Sid": "RekognitionIndexFace",
+            "Effect": "Allow",
+            "Action": [
+            "rekognition:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "S3PutSourceImage",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:HeadObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::face-rekognition-source-bucket/*",
+                "arn:aws:s3:::face-rekognition-source-bucket"
+            ]
+        }
+    ]
+}
+EOF
+    tags = {
+      Name = "Face-Rekognition-Application-Server-Policy"
+      Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    }
+}
+
+###################################################################################################################################################################
+#                                                      Attaching IAM Role and Policy
+###################################################################################################################################################################
+
+resource "aws_iam_role_policy_attachment" "application-server" {
+  role = aws_iam_role.application-server-role.id
+  policy_arn = aws_iam_policy.application-server-policy.arn
+}
