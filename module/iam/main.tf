@@ -276,3 +276,131 @@ resource "aws_iam_instance_profile" "application-server-instance-profile" {
   name = "Face-Rekognition-Application-Server-Instance-Profile"
   role = aws_iam_role.application-server-role.id
 }
+
+
+###################################################################################################################################################################
+#                                                                IAM Role
+###################################################################################################################################################################
+
+#Deploying IAM Role for EKS Cluster
+
+resource "aws_iam_role" "cluster-role" {
+  name = "Face-Rekognition-Cluster-Role"
+  description = "IAM Role for Face-Rekognition Cluster"
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Principal": {
+                "Service": "eks.amazonaws.com"
+            }
+        }
+    ]
+}
+EOF
+    tags = {
+      Name = "Face-Rekognition-Cluster-Role"
+      Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    }
+}
+
+
+###################################################################################################################################################################
+#                                                      Attaching IAM Role and Policy
+###################################################################################################################################################################
+
+resource "aws_iam_role_policy_attachment" "application-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = aws_iam_policy.application-server-policy.arn
+}
+
+
+resource "aws_iam_role_policy_attachment" "compute-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSComputePolicy"
+}
+
+
+resource "aws_iam_role_policy_attachment" "storage-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy"
+}
+
+
+resource "aws_iam_role_policy_attachment" "cni-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "loadbalancing-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy"
+}
+
+
+resource "aws_iam_role_policy_attachment" "network-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "cluster-policy" {
+  role = aws_iam_role.cluster-role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+###################################################################################################################################################################
+#                                                                IAM Role
+###################################################################################################################################################################
+
+#Deploying IAM Role for EKS NodeGroup
+
+resource "aws_iam_role" "nodegroup_role" {
+  name = "Face-Rekognition-NodeGroup-role"
+  description = "IAM Role for Face-Rekognition NodeGroup"
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Principal":{
+                "Service": "ec2.amazonaws.com"
+            }
+        }
+    ]
+}  
+EOF
+    tags = {
+      Name = "Face-Rekognition-NodeGroup-role"
+      Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    }
+}
+
+
+###################################################################################################################################################################
+#                                                      Attaching IAM Role and Policy
+###################################################################################################################################################################
+
+resource "aws_iam_role_policy_attachment" "container-registery-policy" {
+  role = aws_iam_role.nodegroup_role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "workernode-policy" {
+  role = aws_iam_role.nodegroup_role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "nodegroup-cni-policy" {
+  role = aws_iam_role.nodegroup_role.id
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "nodegroup-application-policy" {
+  role = aws_iam_role.nodegroup_role.id
+  policy_arn = aws_iam_policy.application-server-policy.arn
+}
