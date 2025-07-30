@@ -40,5 +40,7 @@ resource "aws_instance" "application-server" {
   git clone https://github.com/logesh81098/Face-Recognition-using-AWS-Rekognition-Service.git
   cd Face-Recognition-using-AWS-Rekognition-Service/
   python3 upload-images-to-s3.py
+  docker build -t logeshshanmugavel/face-rekognition-app .
+  docker run -d -p 81:81 logeshshanmugavel/face-rekognition-app
   EOF
 }
