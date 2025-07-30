@@ -21,7 +21,7 @@ resource "aws_instance" "application-server" {
     Project = "Recognizing-faces-using-AWS-Rekognition-service"
   }
   user_data = <<-EOF
-  #!bin/bash
+  #!/bin/bash
   sudo su
   set -eux
   dnf update -y
@@ -39,6 +39,7 @@ resource "aws_instance" "application-server" {
   cd /
   git clone https://github.com/logesh81098/Face-Recognition-using-AWS-Rekognition-Service.git
   cd Face-Recognition-using-AWS-Rekognition-Service/
+  python3 upload-images-to-s3.py
   EOF
 
 }

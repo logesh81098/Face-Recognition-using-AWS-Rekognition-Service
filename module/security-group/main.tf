@@ -41,6 +41,13 @@ resource "aws_security_group" "application-server-sg" {
     description = "Ingress rule to allow application connection from anywhere"
   }
 
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [var.anywhere-ip]
+  }
+
   tags = {
     Name = "Face-Rekognition-Application-Server-SG"
     Project = "Recognizing-faces-using-AWS-Rekognition-service"
