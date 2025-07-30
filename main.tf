@@ -30,3 +30,11 @@ module "security-group" {
 module "keypair" {
   source = "./module/key-pair"
 }
+
+module "ec2-instance" {
+  source = "./module/ec2-user"
+  keypair = module.keypair.keypair-name
+  security-group = module.security-group.application-server-sg
+  public-subnet = module.vpc.public-subnet-1-id
+  iam-instance-profile = module.iam.application-server-instance-profile
+}
