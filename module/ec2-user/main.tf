@@ -41,5 +41,4 @@ resource "aws_instance" "application-server" {
   cd Face-Recognition-using-AWS-Rekognition-Service/
   python3 upload-images-to-s3.py
   EOF
-
 }
