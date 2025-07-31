@@ -53,3 +53,107 @@ resource "aws_security_group" "application-server-sg" {
     Project = "Recognizing-faces-using-AWS-Rekognition-service"
   }
 }
+
+
+###################################################################################################################################################################
+#                                                                Security Group  
+###################################################################################################################################################################
+
+#Security Group for EKS Cluster
+
+resource "aws_security_group" "eks-cluster-sg" {
+  name = "Face-Rekognition-EKS-Cluster-SG"
+  description = "Security Group for Face-Rekognition-EKS-Cluster"
+  vpc_id = var.vpc-id
+
+  ingress {
+    from_port = var.API-server
+    to_port = var.API-server
+    protocol = "tcp"
+    cidr_blocks = [ var.anywhere-ip ]
+    description = "Ingress rule for API Server"
+  }
+
+  ingress {
+    from_port = var.Application-Port
+    to_port = var.Application-Port
+    protocol = "tcp"
+    cidr_blocks = [var.anywhere-ip]
+    description = "Ingress rule to allow application connection from anywhere"
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ var.anywhere-ip ]
+  }
+
+  tags = {
+    Name = "Face-Rekognition-EKS-Cluster-SG"
+    Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    "kubernetes.io/cluster/Face-Rekognition-Cluster" = "owned"
+    "eks-cluster-name" = "Face-Rekognition-EKS-Cluster"
+
+  }
+}
+
+
+###################################################################################################################################################################
+#                                                                Security Group  
+###################################################################################################################################################################
+
+#Security Group for EKS Nodegroup
+
+resource "aws_security_group" "nodegroup-sg" {
+  name = "Face-Rekognition-EKS-NodeGroup-SG"
+  description = "Security Group for Face Rekognition EKS NodeGroup"
+  vpc_id = var.vpc-id
+
+  ingress {
+    from_port = var.API-server
+    to_port = var.API-server
+    protocol = "tcp"
+    cidr_blocks = [ var.anywhere-ip ]
+    description = "Ingress rule for API Server"
+  }
+
+  ingress {
+    from_port = var.Application-Port
+    to_port = var.Application-Port
+    protocol = "tcp"
+    cidr_blocks = [var.anywhere-ip]
+    description = "Ingress rule to allow application connection from anywhere"
+  }
+
+  ingress {
+    from_port = "0"
+    to_port = "65535"
+    protocol = "tcp"
+    self = true
+    description = "Allow All Traffic from self"
+  }
+
+  ingress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = [aws_security_group.eks-cluster-sg.id ]
+    description = "Allow All Traffic from EKS Cluster Security Group"
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ var.anywhere-ip ]
+  }
+
+  tags = {
+    Name = "Face-Rekognition-EKS-NodeGroup-SG"
+    Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    "kubernetes.io/cluster/Face-Rekognition-Cluster" = "owned"
+    "eks-cluster-name" = "Face-Rekognition-EKS-Cluster"
+  }
+
+}

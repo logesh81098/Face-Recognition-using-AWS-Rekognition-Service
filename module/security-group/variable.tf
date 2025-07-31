@@ -22,3 +22,7 @@ variable "Application-Port" {
 variable "HTTPS-Port" {
   default = "443"
 }
+
+variable "API-server" {
+  default = "443"
+}
