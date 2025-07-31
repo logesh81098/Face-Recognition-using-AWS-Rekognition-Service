@@ -22,3 +22,11 @@ variable "az2" {
 variable "igw-route" {
   default = "0.0.0.0/0"
 }
+
+variable "private-subnet-1-cidr" {
+  default = "10.0.3.0/24"
+}
+
+variable "private-subnet-2-cidr" {
+  default = "10.0.4.0/24"
+}
