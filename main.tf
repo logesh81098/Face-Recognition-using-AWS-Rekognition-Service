@@ -38,3 +38,10 @@ module "ec2-instance" {
   public-subnet = module.vpc.public-subnet-1-id
   iam-instance-profile = module.iam.application-server-instance-profile
 }
+
+module "launch-templaet" {
+  source = "./module/launch-template"
+  application-sg = module.security-group.application-server-sg
+  nodegroup-sg = module.security-group.nodegroup-sg
+  keyname = module.keypair.keypair-name
+}
