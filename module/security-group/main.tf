@@ -41,6 +41,13 @@ resource "aws_security_group" "application-server-sg" {
     description = "Ingress rule to allow application connection from anywhere"
   }
 
+  ingress {
+    from_port = var.Jenkins-Port
+    to_port = var.Jenkins-Port
+    protocol = "tcp"
+    cidr_blocks = var.anywhere-ip
+    description = "Ingress rule to access Jenkins from anywhere"
+  }
   egress {
     from_port = 0
     to_port = 0
@@ -51,6 +58,8 @@ resource "aws_security_group" "application-server-sg" {
   tags = {
     Name = "Face-Rekognition-Application-Server-SG"
     Project = "Recognizing-faces-using-AWS-Rekognition-service"
+    "kubernetes.io/cluster/Face-Rekognition-Cluster" = "owned"
+    "eks-cluster-name" = "Face-Rekognition-EKS-Cluster"
   }
 }
 
@@ -155,5 +164,4 @@ resource "aws_security_group" "nodegroup-sg" {
     "kubernetes.io/cluster/Face-Rekognition-Cluster" = "owned"
     "eks-cluster-name" = "Face-Rekognition-EKS-Cluster"
   }
-
 }
