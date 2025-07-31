@@ -39,9 +39,20 @@ module "ec2-instance" {
   iam-instance-profile = module.iam.application-server-instance-profile
 }
 
-module "launch-templaet" {
+module "launch-template" {
   source = "./module/launch-template"
   application-sg = module.security-group.application-server-sg
   nodegroup-sg = module.security-group.nodegroup-sg
   keyname = module.keypair.keypair-name
+}
+
+module "eks-cluster" {
+  source = "./module/eks-cluster"
+  cluster-role-arn = module.iam.eks-cluster-role-arn
+  application-sg = module.security-group.application-server-sg
+  cluster-sg = module.security-group.cluster-sg
+  launch-template-id = module.launch-template.launch-template-id
+  private-subnet-1 = module.vpc.private-subnet-1
+  private-subnet-2 = module.vpc.private-subnet-2
+  nodegroup-role-arn = module.iam.nodegroup-role-arn
 }
